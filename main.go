@@ -5,16 +5,27 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
+
+	"github.com/pavelerokhin/go-and-scrape/models"
 )
 
 func main() {
-	url := "https://meduza.io/"
+	meduza := models.Medium{
+		URL: "https://meduza.io/", 
+		CsvName: "meduza2.csv",
+		HTMLTags: models.HTMLTags{
+			Article: "article",
+			Tag: ".RichBlock-tag",
+			Title: ".BlockTitle-first",
+			Subtitle: ".BlockTitle-second",
+			URL: ".Link-root",
+		},
+	}
 
-	response, err := http.Get(url)
+	response, err := http.Get(meduza.URL)
 	defer response.Body.Close()
 	checkErr(err)
 
@@ -26,7 +37,7 @@ func main() {
 	document, err := goquery.NewDocumentFromReader(response.Body)
 	checkErr(err)
 
-	newsContainer := document.Find("article")
+	newsContainer := document.Find(meduza.HTMLTags.Article)
 	if newsContainer.Size() == 0 {
 		fmt.Println("no news")
 		os.Exit(0)
@@ -34,22 +45,35 @@ func main() {
 	fmt.Printf("%d articles has been fond\n", newsContainer.Size())
 
 
-	file, err := os.Create("meduza.csv")
+	file, err := os.Create(meduza.CsvName)
 	checkErr(err)
 
-	writer := csv.NewWriter(file)
+	var articles []models.Article
+	
 	newsContainer.Each(func(i int, item *goquery.Selection) {
-		tag := strings.TrimSpace(item.Find(".RichBlock-tag").Text())
-		title := strings.TrimSpace(item.Find(".BlockTitle-first").Text())
-		subtitle := strings.TrimSpace(item.Find(".BlockTitle-second").Text())
-		urlArticle, _ := item.Find(".Link-root").Attr("href")
-		urlArticle = fmt.Sprintf("%s%s", url, urlArticle)
+		tag := strings.TrimSpace(item.Find(meduza.HTMLTags.Tag).Text())
+		title := strings.TrimSpace(item.Find(meduza.HTMLTags.Title).Text())
+		subtitle := strings.TrimSpace(item.Find(meduza.HTMLTags.Subtitle).Text())
+		urlArticle, _ := item.Find(meduza.HTMLTags.URL).Attr("href")
+		urlArticle = fmt.Sprintf("%s%s", meduza.URL, urlArticle)
 		
-		fmt.Printf("%s --- %s --- %s\n%s\n\n", tag, title, subtitle, urlArticle)
-		writer.Write([]string{strconv.Itoa(i), tag, title, subtitle, urlArticle})
+		articles = append(articles, models.Article{
+			Tag: tag,
+			Title: title,
+			Subtitle: subtitle,
+			URL: urlArticle,
+		})
 	})
 
-	writer.Flush()
+	if len(articles) > 0 {
+		writer := csv.NewWriter(file)
+		defer writer.Flush()
+		writer.Write(articles[0].GetHeaders())
+		for i:=0; i<len(articles); i++ {
+			writer.Write(articles[i].ToSlice())
+		}
+		
+	}
 }
 
 func checkErr(err error) {
