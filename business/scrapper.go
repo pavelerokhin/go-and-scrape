@@ -19,7 +19,7 @@ func ScrapMedium(medium *models.Medium) ([]models.Article, error) {
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("Status code: %v", response.StatusCode)
+		return nil, fmt.Errorf("status code: %v", response.StatusCode)
 	}
 
 	document, err := goquery.NewDocumentFromReader(response.Body)
@@ -32,7 +32,8 @@ func ScrapMedium(medium *models.Medium) ([]models.Article, error) {
 		return nil, fmt.Errorf("no news")
 	}
 
-	fmt.Printf("%d articles has been fond\n", newsContainer.Size())
+	fmt.Printf("%d articles has been found for the medium %s\n", newsContainer.Size(),
+		medium.Name)
 	var articles []models.Article
 	newsContainer.Each(func(i int, item *goquery.Selection) {
 		tag := strings.TrimSpace(item.Find(medium.HTMLTags.Tag).Text())
