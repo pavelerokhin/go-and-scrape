@@ -5,27 +5,17 @@ import (
 	"os"
 
 	"github.com/pavelerokhin/go-and-scrape/business"
-	"github.com/pavelerokhin/go-and-scrape/models"
 )
 
 func main() {
-	meduza := models.Medium{
-		URL: "https://meduza.io/", 
-		CsvName: "meduza2.csv",
-		HTMLTags: models.HTMLTags{
-			Article: "article",
-			Tag: ".RichBlock-tag",
-			Title: ".BlockTitle-first",
-			Subtitle: ".BlockTitle-second",
-			URL: ".Link-root",
-		},
-	}
-
-	articles, err := business.ScrapMedium(&meduza)
+	mediums, err := business.ReadMediumConfig("medium-config.yaml")
 	checkErr(err)
-	
+
+	articles, err := business.ScrapMedium(&mediums.Mediums[0].Medium)
+	checkErr(err)
+
 	if len(articles) > 0 {
-		err = business.WriteCSV(articles, &meduza)
+		err = business.WriteCSV(articles, &mediums.Mediums[0].Medium)
 	}
 	checkErr(err)
 }
@@ -36,4 +26,3 @@ func checkErr(err error) {
 		os.Exit(1)
 	}
 }
-
