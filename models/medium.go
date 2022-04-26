@@ -1,18 +1,27 @@
 package models
 
-// Medium is a basic news portal model
-type Medium struct {
-	URL string
-	CsvName string
-	HTMLTags HTMLTags
+type ConfigFile struct {
+	Mediums Mediums `yaml:"mediums"`
 }
 
-// HTMLTags medium specific set of CSS-selectors for 
+type Mediums []struct {
+	Medium Medium `yaml:"medium"`
+}
+
+// Medium is a basic news portal model
+type Medium struct {
+	Name     string   `yaml:"name"`
+	URL      string   `yaml:"medium-url"`
+	CsvName  string   `yaml:"csv-name"`
+	HTMLTags HTMLTags `yaml:"html-tags"`
+}
+
+// HTMLTags medium specific set of CSS-selectors for
 // the requested parts of the article to scrape
 type HTMLTags struct {
-	Article string
-	Tag string
-	Title string
-	Subtitle string
-	URL string
+	Article  string `yaml:"article"`
+	Tag      string `yaml:"tag"`
+	Title    string `yaml:"title"`
+	Subtitle string `yaml:"subtitle"`
+	URL      string `yaml:"article-url"`
 }
