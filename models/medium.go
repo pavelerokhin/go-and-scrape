@@ -12,7 +12,7 @@ type Mediums []struct {
 type Medium struct {
 	Name     string   `yaml:"name"`
 	URL      string   `yaml:"medium-url"`
-	CsvName  string   `yaml:"csv-name"`
+	FileName string   `yaml:"file-name"`
 	HTMLTags HTMLTags `yaml:"html-tags"`
 }
 

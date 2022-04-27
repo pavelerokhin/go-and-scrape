@@ -1,0 +1,21 @@
+mediums:
+  - medium:
+      name: Meduza
+      medium-url: https://meduza.io/
+      file-name: meduza.csv
+      html-tags:
+        article: article
+        tag: .RichBlock-tag
+        title: .BlockTitle-first
+        subtitle: .BlockTitle-second
+        article-url: .Link-root
+  - medium:
+      name: kp
+      medium-url: https://www.kp.ru/online/
+      file-name: kp.csv
+      html-tags:
+        article: .styled__DigestItemWrapper-sc-1tputnk-13
+        tag: .styled__TagDesktop-sc-1tputnk-11
+        title: .styled__TitleLink-sc-1tputnk-2
+        subtitle: .styled__DescriptionLink-sc-1tputnk-3
+        article-url: .styled__TitleLink-sc-1tputnk-2
