@@ -10,8 +10,7 @@ import (
 )
 
 var (
-	articleStorage *storage.ArticleStorage
-	wg             sync.WaitGroup
+	wg sync.WaitGroup
 )
 
 func main() {
