@@ -9,11 +9,11 @@ import (
 	glogger "gorm.io/gorm/logger"
 )
 
-type SQLiteArticleRepo struct {
+type SQLiteRepo struct {
 	DB *gorm.DB
 }
 
-func NewSQLiteArticleRepo(dbFileName string) (*SQLiteArticleRepo, error) {
+func NewSQLiteArticleRepo(dbFileName string) (*SQLiteRepo, error) {
 	if dbFileName == "" {
 		return nil, fmt.Errorf("database name is empty")
 	}
@@ -35,11 +35,11 @@ func NewSQLiteArticleRepo(dbFileName string) (*SQLiteArticleRepo, error) {
 		return nil, err
 	}
 
-	return &SQLiteArticleRepo{DB: sql}, nil
+	return &SQLiteRepo{DB: sql}, nil
 }
 
-// GetArticle gets article with `id` from the SQLite DB
-func (r *SQLiteArticleRepo) GetArticle(id int) (*entities.Article, error) {
+// GetArticleByID gets article with `id` from the SQLite DB
+func (r *SQLiteRepo) GetArticleByID(id int) (*entities.Article, error) {
 	var article *entities.Article
 	tx := r.DB.Where("id = ?", id).Find(&article)
 
@@ -50,8 +50,8 @@ func (r *SQLiteArticleRepo) GetArticle(id int) (*entities.Article, error) {
 	return nil, fmt.Errorf("article with ID %v not found", id)
 }
 
-// GetMedium gets medium with `id` from the SQLite DB
-func (r *SQLiteArticleRepo) GetMedium(id int) (*entities.Medium, error) {
+// GetMediumByID gets medium with `id` from the SQLite DB
+func (r *SQLiteRepo) GetMediumByID(id int) (*entities.Medium, error) {
 	var medium *entities.Medium
 	tx := r.DB.Where("id = ?", id).Find(&medium)
 
@@ -62,8 +62,25 @@ func (r *SQLiteArticleRepo) GetMedium(id int) (*entities.Medium, error) {
 	return nil, fmt.Errorf("medium with ID %v not found", id)
 }
 
+// GetMediumByURL gets medium with `url` from the SQLite DB
+func (r *SQLiteRepo) GetMediumByURL(url string) (*entities.Medium, error) {
+	var medium *entities.Medium
+	r.DB.Where("url = ?", url).Find(&medium)
+
+	return medium, nil
+}
+
+func (r *SQLiteRepo) SaveArticle(a *entities.Article) (*entities.Article, error) {
+	tx := r.DB.Create(&a)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	return a, nil
+}
+
 // Save saves medium with all scrapped articles to the SQLite DB
-func (r *SQLiteArticleRepo) Save(m *entities.Medium) (*entities.Medium, error) {
+func (r *SQLiteRepo) SaveMedium(m *entities.Medium) (*entities.Medium, error) {
 	tx := r.DB.Create(&m)
 	if tx.Error != nil {
 		return nil, tx.Error

@@ -24,14 +24,20 @@ func NewCSVArticleRepo(medium *configs.MediumConfig) (*CSVArticleRepo, error) {
 	return &CSVArticleRepo{File: file, Writer: writer}, nil
 }
 
-// GetArticle gets article with `id` from the CSV file
-func (r *CSVArticleRepo) GetArticle(id int) (*entities.Article, error) {
+// GetArticleByID gets article with `id` from the CSV file
+func (r *CSVArticleRepo) GetArticleByID(id int) (*entities.Article, error) {
 
 	return nil, nil
 }
 
-// GetMedium gets medium with `id` from the CSV file
-func (r *CSVArticleRepo) GetMedium(id int) (*entities.Article, error) {
+// GetMediumByID gets medium with `id` from the CSV file
+func (r *CSVArticleRepo) GetMediumByID(id int) (*entities.Article, error) {
+
+	return nil, nil
+}
+
+// GetMediumByURL gets medium with `id` from the CSV file
+func (r *CSVArticleRepo) GetMediumByURL(url string) (*entities.Article, error) {
 
 	return nil, nil
 }

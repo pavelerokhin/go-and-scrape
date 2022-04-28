@@ -52,6 +52,6 @@ func splitWords(s string) []string {
 }
 
 func stripPunctuation(s string) string {
-	r := regexp.MustCompile(`[()\[\].,\-"':;]`)
+	r := regexp.MustCompile(`[()\[\].,\-"':;«»—!?]`)
 	return r.ReplaceAllLiteralString(s, "")
 }
