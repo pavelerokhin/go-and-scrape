@@ -10,18 +10,21 @@ import (
 	"github.com/pavelerokhin/go-and-scrape/storage"
 )
 
-func ScrapeAndPersist(storage *storage.SQLiteRepo, mediumConfig *configs.MediumConfig, wg *sync.WaitGroup) error {
+func ScrapeAndPersistWorker(storage *storage.SQLiteRepo,
+	mediumConfig *configs.MediumConfig, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	articles, err := ScrapMedium(mediumConfig)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return
 	}
 
 	var medium *entities.Medium
 	medium, err = storage.GetMediumByURL(mediumConfig.URL)
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return
 	}
 
 	if len(articles) > 0 {
@@ -43,10 +46,9 @@ func ScrapeAndPersist(storage *storage.SQLiteRepo, mediumConfig *configs.MediumC
 
 	}
 	if err != nil {
-		return err
+		fmt.Println(err)
+		return
 	}
-
-	return nil
 }
 
 func normalizeArticlesNLP(articles []entities.Article) []entities.Article {

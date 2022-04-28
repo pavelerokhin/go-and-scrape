@@ -27,12 +27,7 @@ func main() {
 	for _, medium := range fileConfig.Mediums {
 		wg.Add(1)
 		m := medium.MediumConfig
-		go func() {
-			err := business.ScrapeAndPersist(articleStorage, &m, &wg)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}()
+		go business.ScrapeAndPersistWorker(articleStorage, &m, &wg)
 	}
 	wg.Wait()
 }
