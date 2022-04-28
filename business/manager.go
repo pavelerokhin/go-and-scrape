@@ -3,27 +3,27 @@ package business
 import (
 	"sync"
 
-	"github.com/pavelerokhin/go-and-scrape/models"
-	"github.com/pavelerokhin/go-and-scrape/store"
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/storage"
 )
 
-var (
-	articleStorage *store.ArticleStorage
-)
-
-func ScrapeAndPersist(medium *models.Medium, wg *sync.WaitGroup) error {
+func ScrapeAndPersist(articleStorage *storage.SQLiteArticleRepo, mediumConfig *configs.MediumConfig, wg *sync.WaitGroup) error {
 	defer wg.Done()
-	articleStorage, err := store.NewSQLiteArtcleRepo(medium)
 
-	articles, err := ScrapMedium(medium)
+	articles, err := ScrapMedium(mediumConfig)
 	if err != nil {
 		return err
 	}
 
 	if len(articles) > 0 {
-		for _, article := range articles {
-			_, err = articleStorage.Save(&article)
+		medium := entities.Medium{
+			Name:     mediumConfig.Name,
+			URL:      mediumConfig.URL,
+			Articles: articles,
 		}
+
+		_, err = articleStorage.Save(&medium)
 	}
 	if err != nil {
 		return err

@@ -1,19 +1,20 @@
 package business
 
 import (
-	"github.com/pavelerokhin/go-and-scrape/models"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
+
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
 )
 
-// ReadMediumConfig reads `config` file and returns list of Mediums
-func ReadMediumConfig(config string) (*models.ConfigFile, error) {
+// ReadMediumConfig reads `configs` file and returns list of Mediums
+func ReadMediumConfig(config string) (*configs.ConfigFile, error) {
 	b, err := ioutil.ReadFile(config)
 	if err != nil {
 		return nil, err
 	}
 
-	mediums := &models.ConfigFile{}
+	mediums := &configs.ConfigFile{}
 	err = yaml.Unmarshal(b, mediums)
 	if err != nil {
 		return nil, err

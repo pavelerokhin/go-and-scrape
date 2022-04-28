@@ -2,7 +2,7 @@ mediums:
   - medium:
       name: Meduza
       medium-url: https://meduza.io/
-      file-name: meduza.csv
+      file-name: mediums
       html-tags:
         article: article
         tag: .RichBlock-tag
@@ -12,7 +12,7 @@ mediums:
   - medium:
       name: kp
       medium-url: https://www.kp.ru/online/
-      file-name: kp.csv
+      file-name: mediums
       html-tags:
         article: .styled__DigestItemWrapper-sc-1tputnk-13
         tag: .styled__TagDesktop-sc-1tputnk-11

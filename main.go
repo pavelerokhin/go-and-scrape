@@ -6,26 +6,41 @@ import (
 	"sync"
 
 	"github.com/pavelerokhin/go-and-scrape/business"
+	"github.com/pavelerokhin/go-and-scrape/storage"
 )
 
-var wg sync.WaitGroup
+var (
+	articleStorage *storage.ArticleStorage
+	wg             sync.WaitGroup
+)
 
 func main() {
-	mediums, err := business.ReadMediumConfig("medium-config.yaml")
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	fileConfig, err := business.ReadMediumConfig("medium-config.yaml")
+	check(err)
 
-	for _, medium := range mediums.Mediums {
+	if len(fileConfig.Mediums) == 0 {
+		fmt.Println("no mediums set")
+		os.Exit(0)
+	}
+	articleStorage, err := storage.NewSQLiteArticleRepo(fileConfig.Mediums[0].MediumConfig.FileName)
+	check(err)
+
+	for _, medium := range fileConfig.Mediums {
 		wg.Add(1)
-		m := medium.Medium
+		m := medium.MediumConfig
 		go func() {
-			err := business.ScrapeAndPersist(&m, &wg)
+			err := business.ScrapeAndPersist(articleStorage, &m, &wg)
 			if err != nil {
 				fmt.Println(err)
 			}
 		}()
 	}
 	wg.Wait()
+}
+
+func check(err error) {
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }
