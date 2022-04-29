@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"sync"
 
@@ -10,7 +11,8 @@ import (
 )
 
 var (
-	wg sync.WaitGroup
+	logger = log.New(os.Stdout, "go-and-scrape-logger", log.LstdFlags|log.Llongfile)
+	wg     sync.WaitGroup
 )
 
 func main() {
@@ -26,15 +28,13 @@ func main() {
 
 	for _, medium := range fileConfig.Mediums {
 		wg.Add(1)
-		m := medium.MediumConfig
-		go business.ScrapeAndPersistWorker(articleStorage, &m, &wg)
+		go business.ScrapeAndPersistWorker(articleStorage, logger, medium.MediumConfig, &wg)
 	}
 	wg.Wait()
 }
 
 func check(err error) {
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		logger.Fatal(err)
 	}
 }

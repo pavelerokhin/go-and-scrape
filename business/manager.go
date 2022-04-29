@@ -2,6 +2,7 @@ package business
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"sync"
 
@@ -10,26 +11,28 @@ import (
 	"github.com/pavelerokhin/go-and-scrape/storage"
 )
 
-func ScrapeAndPersistWorker(storage *storage.SQLiteRepo,
-	mediumConfig *configs.MediumConfig, wg *sync.WaitGroup) {
-	defer wg.Done()
+var businessLogger *log.Logger
 
-	articles, err := ScrapMedium(mediumConfig)
+func ScrapeAndPersistWorker(storage *storage.SQLiteRepo, logger *log.Logger,
+	mediumConfig configs.MediumConfig, wg *sync.WaitGroup) {
+	defer wg.Done()
+	businessLogger = logger
+
+	articles, err := ScrapMedium(&mediumConfig)
 	if err != nil {
-		fmt.Println(err)
+		businessLogger.Println(err)
 		return
 	}
 
 	var medium *entities.Medium
 	medium, err = storage.GetMediumByURL(mediumConfig.URL)
 	if err != nil {
-		fmt.Println(err)
+		businessLogger.Println(err)
 		return
 	}
 
 	if len(articles) > 0 {
 		articles = normalizeArticlesNLP(articles)
-
 		if medium.URL == "" {
 			_, err = storage.SaveMedium(&entities.Medium{
 				Name:     mediumConfig.Name,
@@ -43,10 +46,9 @@ func ScrapeAndPersistWorker(storage *storage.SQLiteRepo,
 				_, err = storage.SaveArticle(&a)
 			}
 		}
-
 	}
 	if err != nil {
-		fmt.Println(err)
+		businessLogger.Println(err)
 		return
 	}
 }
