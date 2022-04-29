@@ -25,19 +25,19 @@ func (s *Scrapper) ScrapMedium(mediumConfig *configs.MediumConfig) []entities.Ar
 	s.logger.Printf("start to scrap medium %s", mediumConfig.Name)
 	response, err := http.Get(mediumConfig.URL)
 	if err != nil {
-		s.logger.Printf("error sending the request: %e\n", err)
+		s.logger.Printf("error sending the request: %e", err)
 		return nil
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		s.logger.Printf("status code: %v\n", response.StatusCode)
+		s.logger.Printf("status code: %v", response.StatusCode)
 		return nil
 	}
 
 	document, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
-		s.logger.Printf("error while reading from the document: %e\n", err)
+		s.logger.Printf("error while reading from the document: %e", err)
 		return nil
 	}
 
@@ -47,7 +47,7 @@ func (s *Scrapper) ScrapMedium(mediumConfig *configs.MediumConfig) []entities.Ar
 		return nil
 	}
 
-	s.logger.Printf("%d articles has been found for the medium %s\n", newsContainer.Size(),
+	s.logger.Printf("%d articles has been found for the medium %s", newsContainer.Size(),
 		mediumConfig.Name)
 
 	var articles []entities.Article
@@ -66,6 +66,6 @@ func (s *Scrapper) ScrapMedium(mediumConfig *configs.MediumConfig) []entities.Ar
 		})
 	})
 
-	s.logger.Printf("scrapping of medium %s finished successfully\n", mediumConfig.Name)
+	s.logger.Printf("scrapping of medium %s finished successfully", mediumConfig.Name)
 	return articles
 }
