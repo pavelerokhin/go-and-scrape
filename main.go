@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"github.com/pavelerokhin/go-and-scrape/business/modules"
 	"log"
 	"os"
 	"sync"
@@ -18,7 +17,7 @@ var (
 func main() {
 	logger := log.New(os.Stdout, "user-service-log", log.LstdFlags|log.Llongfile)
 	businessLogic := business.GetBusinessLogic(logger)
-	fileConfig, err := modules.ReadMediumConfig("medium-config.yaml")
+	fileConfig, err := businessLogic.ReadMediumConfig("medium-config.yaml")
 	check(err)
 
 	if len(fileConfig.Mediums) == 0 {
