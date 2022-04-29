@@ -1,6 +1,8 @@
-package business
+package modules
 
 import (
+	"fmt"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 	"regexp"
 	"sort"
 	"strings"
@@ -19,6 +21,40 @@ func countWords(words []string) map[string]int {
 	}
 
 	return count
+}
+
+func NormalizeArticlesNLP(articles []entities.Article) []entities.Article {
+	var normalizedArtiles []entities.Article
+	for _, article := range articles {
+		normalizedArtiles = append(normalizedArtiles, entities.Article{
+			Tag:      nlpManagerSmall(article.Tag),
+			Title:    nlpManagerSmall(article.Title),
+			Subtitle: nlpManagerSmall(article.Subtitle),
+			URL:      article.URL,
+			MediumID: article.MediumID,
+		})
+	}
+
+	return normalizedArtiles
+}
+
+func nlpManagerBig(s string) []string {
+	noPunctuation := stripPunctuation(s)
+	words := splitWords(noPunctuation)
+
+	var stems []string
+	for _, word := range words {
+		stems = append(stems, strings.ToLower(stem(word)))
+	}
+
+	wordsCountDict := countWords(stems)
+	wordsRanked := rankByWordCount(wordsCountDict)
+	fmt.Println(wordsRanked)
+	return nil
+}
+
+func nlpManagerSmall(s string) string {
+	return strings.ToLower(stripPunctuation(s))
 }
 
 func rankByWordCount(wordFrequencies map[string]int) PairList {
