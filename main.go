@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/pavelerokhin/go-and-scrape/business/modules"
+	"log"
 	"os"
 	"sync"
 
@@ -15,6 +16,8 @@ var (
 )
 
 func main() {
+	logger := log.New(os.Stdout, "user-service-log", log.LstdFlags|log.Llongfile)
+	businessLogic := business.GetBusinessLogic(logger)
 	fileConfig, err := modules.ReadMediumConfig("medium-config.yaml")
 	check(err)
 
@@ -29,7 +32,7 @@ func main() {
 		wg.Add(1)
 		m := medium.MediumConfig
 		go func() {
-			err := business.ScrapeAndPersist(articleStorage, &m, &wg)
+			err := businessLogic.ScrapeAndPersist(articleStorage, &m, &wg)
 			if err != nil {
 				fmt.Println(err)
 			}
