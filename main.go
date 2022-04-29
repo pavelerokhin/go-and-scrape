@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/pavelerokhin/go-and-scrape/config"
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
 	"log"
 	"os"
 	"sync"
@@ -11,28 +13,33 @@ import (
 )
 
 var (
-	wg sync.WaitGroup
+	businessLogic business.Business
+	repo          storage.Storage
+	wg            sync.WaitGroup
 )
 
 func main() {
-	logger := log.New(os.Stdout, "go-and-scrape-log", log.LstdFlags|log.Llongfile)
-	businessLogic := business.GetBusinessLogic(logger)
-	fileConfig, err := businessLogic.ReadMediumConfig("medium-config.yaml")
+	logger := log.New(os.Stdout, "go-and-scrape ", log.LstdFlags|log.Lshortfile)
+	configFile, err := config.ReadMediumConfig("medium-config.yaml")
 	check(err)
+	checkConfig(configFile)
+	repo, err = storage.NewSQLiteArticleRepo(configFile.Mediums[0].MediumConfig.FileName,
+		logger)
+	check(err)
+	businessLogic = business.GetBusinessLogic(logger, repo)
 
-	if len(fileConfig.Mediums) == 0 {
+	for _, medium := range configFile.Mediums {
+		wg.Add(1)
+		go businessLogic.ScrapeAndPersist(medium.MediumConfig, &wg)
+	}
+	wg.Wait()
+}
+
+func checkConfig(configFile *configs.ConfigFile) {
+	if len(configFile.Mediums) == 0 {
 		fmt.Println("no mediums set")
 		os.Exit(0)
 	}
-	articleStorage, err := storage.NewSQLiteArticleRepo(fileConfig.Mediums[0].MediumConfig.FileName,
-		logger)
-	check(err)
-
-	for _, medium := range fileConfig.Mediums {
-		wg.Add(1)
-		go businessLogic.ScrapeAndPersist(articleStorage, medium.MediumConfig, &wg)
-	}
-	wg.Wait()
 }
 
 func check(err error) {
