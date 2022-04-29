@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/pavelerokhin/go-and-scrape/business/modules"
 	"os"
 	"sync"
 
@@ -14,7 +15,7 @@ var (
 )
 
 func main() {
-	fileConfig, err := business.ReadMediumConfig("medium-config.yaml")
+	fileConfig, err := modules.ReadMediumConfig("medium-config.yaml")
 	check(err)
 
 	if len(fileConfig.Mediums) == 0 {

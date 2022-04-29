@@ -1,4 +1,4 @@
-package business
+package modules
 
 import (
 	"gopkg.in/yaml.v2"
