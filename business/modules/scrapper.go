@@ -4,37 +4,52 @@ import (
 	"fmt"
 	"github.com/pavelerokhin/go-and-scrape/models/configs"
 	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"log"
 	"net/http"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
 )
 
+type Scrapper struct {
+	logger *log.Logger
+}
+
+func NewScrapper(logger *log.Logger) *Scrapper {
+	return &Scrapper{logger: logger}
+}
+
 // ScrapMedium is a function that scpapa medium and returns a slice of Article
 // objects and error
-func ScrapMedium(mediumConfig *configs.MediumConfig) ([]entities.Article, error) {
+func (s *Scrapper) ScrapMedium(mediumConfig *configs.MediumConfig) []entities.Article {
+	s.logger.Printf("start to scrap medium %s", mediumConfig.Name)
 	response, err := http.Get(mediumConfig.URL)
 	if err != nil {
-		return nil, err
+		s.logger.Printf("error sending the request: %e\n", err)
+		return nil
 	}
 	defer response.Body.Close()
 
 	if response.StatusCode >= 400 {
-		return nil, fmt.Errorf("status code: %v", response.StatusCode)
+		s.logger.Printf("status code: %v\n", response.StatusCode)
+		return nil
 	}
 
 	document, err := goquery.NewDocumentFromReader(response.Body)
 	if err != nil {
-		return nil, err
+		s.logger.Printf("error while reading from the document: %e\n", err)
+		return nil
 	}
 
 	newsContainer := document.Find(mediumConfig.HTMLTags.Article)
 	if newsContainer.Size() == 0 {
-		return nil, fmt.Errorf("no news")
+		s.logger.Println("no news found")
+		return nil
 	}
 
-	fmt.Printf("%d articles has been found for the medium %s\n", newsContainer.Size(),
+	s.logger.Printf("%d articles has been found for the medium %s\n", newsContainer.Size(),
 		mediumConfig.Name)
+
 	var articles []entities.Article
 	newsContainer.Each(func(i int, item *goquery.Selection) {
 		tag := strings.TrimSpace(item.Find(mediumConfig.HTMLTags.Tag).Text())
@@ -51,5 +66,6 @@ func ScrapMedium(mediumConfig *configs.MediumConfig) ([]entities.Article, error)
 		})
 	})
 
-	return articles, nil
+	s.logger.Printf("scrapping of medium %s finished successfully\n", mediumConfig.Name)
+	return articles
 }

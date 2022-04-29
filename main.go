@@ -25,18 +25,13 @@ func main() {
 		fmt.Println("no mediums set")
 		os.Exit(0)
 	}
-	articleStorage, err := storage.NewSQLiteArticleRepo(fileConfig.Mediums[0].MediumConfig.FileName)
+	articleStorage, err := storage.NewSQLiteArticleRepo(fileConfig.Mediums[0].MediumConfig.FileName,
+		logger)
 	check(err)
 
 	for _, medium := range fileConfig.Mediums {
 		wg.Add(1)
-		m := medium.MediumConfig
-		go func() {
-			err := businessLogic.ScrapeAndPersist(articleStorage, &m, &wg)
-			if err != nil {
-				fmt.Println(err)
-			}
-		}()
+		go businessLogic.ScrapeAndPersist(articleStorage, &medium.MediumConfig, &wg)
 	}
 	wg.Wait()
 }
