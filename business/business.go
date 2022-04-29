@@ -41,11 +41,11 @@ func (b *Business) ReadMediumConfig(configFilePath string) (*configs.ConfigFile,
 	return configFile, nil
 }
 
-func (b *Business) ScrapeAndPersist(storage *storage.SQLiteRepo, mediumConfig *configs.MediumConfig,
+func (b *Business) ScrapeAndPersist(storage *storage.SQLiteRepo, mediumConfig configs.MediumConfig,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	articles := b.scrapper.ScrapMedium(mediumConfig)
+	articles := b.scrapper.ScrapMedium(&mediumConfig)
 	medium := storage.GetMediumByURL(mediumConfig.URL)
 
 	if len(articles) > 0 {

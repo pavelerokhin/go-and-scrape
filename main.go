@@ -15,7 +15,7 @@ var (
 )
 
 func main() {
-	logger := log.New(os.Stdout, "user-service-log", log.LstdFlags|log.Llongfile)
+	logger := log.New(os.Stdout, "go-and-scrape-log", log.LstdFlags|log.Llongfile)
 	businessLogic := business.GetBusinessLogic(logger)
 	fileConfig, err := businessLogic.ReadMediumConfig("medium-config.yaml")
 	check(err)
@@ -30,7 +30,7 @@ func main() {
 
 	for _, medium := range fileConfig.Mediums {
 		wg.Add(1)
-		go businessLogic.ScrapeAndPersist(articleStorage, &medium.MediumConfig, &wg)
+		go businessLogic.ScrapeAndPersist(articleStorage, medium.MediumConfig, &wg)
 	}
 	wg.Wait()
 }
