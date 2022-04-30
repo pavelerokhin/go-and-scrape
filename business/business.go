@@ -23,8 +23,12 @@ func GetBusinessLogic(logger *log.Logger, storage storage.Storage) Business {
 func (b *Business) ScrapeAndPersist(mediumConfig configs.MediumConfig,
 	wg *sync.WaitGroup) {
 	defer wg.Done()
+
+	// scrape
 	medium := b.storage.GetMediumByURL(mediumConfig.URL)
-	articles := b.scrapper.ScrapMedium(&mediumConfig)
+	articles := b.scrapper.Scrap(&mediumConfig)
+
+	// persist
 	if len(articles) > 0 {
 		articles = modules.NormalizeArticlesNLP(articles)
 		if medium == nil || medium.URL == "" {

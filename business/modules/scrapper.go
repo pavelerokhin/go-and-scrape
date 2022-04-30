@@ -19,29 +19,17 @@ func NewScrapper(logger *log.Logger) *Scrapper {
 	return &Scrapper{logger: logger}
 }
 
-// ScrapMedium is a function that scraps medium and returns a slice of Article
+// Scrap is a function that scraps medium and returns a slice of ArticlePreview
 // objects and error
-func (s *Scrapper) ScrapMedium(mediumConfig *configs.MediumConfig) []entities.Article {
+func (s *Scrapper) Scrap(mediumConfig *configs.MediumConfig) []entities.ArticlePreview {
 	s.logger.Printf("start to scrap medium %s", mediumConfig.Name)
-	response, err := http.Get(mediumConfig.URL)
+	document, err := s.getDocument(mediumConfig.URL)
 	if err != nil {
 		s.logger.Printf("error sending the request: %e", err)
 		return nil
 	}
-	defer response.Body.Close()
 
-	if response.StatusCode >= 400 {
-		s.logger.Printf("status code: %v", response.StatusCode)
-		return nil
-	}
-
-	document, err := goquery.NewDocumentFromReader(response.Body)
-	if err != nil {
-		s.logger.Printf("error while reading from the document: %e", err)
-		return nil
-	}
-
-	newsContainer := document.Find(mediumConfig.HTMLTags.Article)
+	newsContainer := document.Find(mediumConfig.HTMLArticlePreviewTags.Article)
 	if newsContainer.Size() == 0 {
 		s.logger.Println("no news found")
 		return nil
@@ -50,25 +38,84 @@ func (s *Scrapper) ScrapMedium(mediumConfig *configs.MediumConfig) []entities.Ar
 	s.logger.Printf("%d articles has been found for the medium %s", newsContainer.Size(),
 		mediumConfig.Name)
 
-	var articles []entities.Article
+	var articles []entities.ArticlePreview
 	newsContainer.Each(func(i int, item *goquery.Selection) {
-		tag := strings.TrimSpace(item.Find(mediumConfig.HTMLTags.Tag).Text())
-		title := strings.TrimSpace(item.Find(mediumConfig.HTMLTags.Title).Text())
-		subtitle := strings.TrimSpace(item.Find(mediumConfig.HTMLTags.Subtitle).Text())
-		urlArticle, _ := item.Find(mediumConfig.HTMLTags.URL).Attr("href")
+		tag := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Tag).Text())
+		title := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Title).Text())
+		subtitle := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Subtitle).Text())
 
+		urlArticle, _ := item.Find(mediumConfig.HTMLArticlePreviewTags.URL).Attr("href")
 		urlArticle = s.getUrl(mediumConfig.URL, urlArticle)
 
-		articles = append(articles, entities.Article{
+		article, err := s.getArticle(mediumConfig, urlArticle)
+		if err != nil {
+			s.logger.Printf("cannot parse article with URL %s for medium %s",
+				urlArticle,
+				mediumConfig.Name)
+			return
+		}
+
+		articles = append(articles, entities.ArticlePreview{
 			Tag:      tag,
 			Title:    title,
 			Subtitle: subtitle,
 			URL:      urlArticle,
+			Article:  article,
 		})
 	})
 
 	s.logger.Printf("scrapping of medium %s finished successfully", mediumConfig.Name)
 	return articles
+}
+
+func deleteEmpty(s []string) []string {
+	var r []string
+	for _, str := range s {
+		if str != "" {
+			r = append(r, str)
+		}
+	}
+	return r
+}
+
+func (s *Scrapper) getArticle(mediumConfig *configs.MediumConfig, url string) (entities.Article, error) {
+	document, err := s.getDocument(url)
+	if err != nil {
+		return entities.Article{}, err
+	}
+
+	var author, date, text string
+	author = document.Find(mediumConfig.HTMLArticleTags.Author).First().Text()
+	date = document.Find(mediumConfig.HTMLArticleTags.Date).First().Text()
+	text = document.Find(mediumConfig.HTMLArticleTags.Text).First().Text()
+
+	return entities.Article{
+		Author: author,
+		Date:   date,
+		Text:   text,
+	}, nil
+
+}
+
+func (s *Scrapper) getDocument(url string) (*goquery.Document, error) {
+	response, err := http.Get(url)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		s.logger.Printf("status code: %v", response.StatusCode)
+		return nil, err
+	}
+
+	document, err := goquery.NewDocumentFromReader(response.Body)
+	if err != nil {
+		s.logger.Printf("error while reading from the document: %e", err)
+		return nil, err
+	}
+
+	return document, nil
 }
 
 func (s *Scrapper) getUrl(mediumUrl, articleUrl string) string {
@@ -104,8 +151,8 @@ func (s *Scrapper) getUrl(mediumUrl, articleUrl string) string {
 			mediumUrl, articleUrl)
 		return ""
 	}
-	return urlWithoutDuplications
 
+	return urlWithoutDuplications
 }
 
 func isUrlValid(url string) bool {
@@ -116,12 +163,10 @@ func isUrlValid(url string) bool {
 func tryRemoveDuplicates(url string) string {
 	var newURL string
 	parts := deleteEmpty(strings.Split(url, "/"))
-
 	newURL = parts[0]
 	if strings.HasPrefix(newURL, "http") {
 		newURL += "/"
 	}
-
 	for i, part := range parts {
 		if i == 0 {
 			continue
@@ -129,19 +174,8 @@ func tryRemoveDuplicates(url string) string {
 		if part == parts[i-1] {
 			continue
 		}
-
 		newURL = fmt.Sprintf("%s/%s", newURL, part)
 	}
 
 	return newURL
-}
-
-func deleteEmpty(s []string) []string {
-	var r []string
-	for _, str := range s {
-		if str != "" {
-			r = append(r, str)
-		}
-	}
-	return r
 }

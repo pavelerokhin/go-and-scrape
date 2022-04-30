@@ -3,17 +3,25 @@ mediums:
       name: Meduza
       medium-url: https://meduza.io/
       file-name: mediums
-      html-tags:
+      html-article-tags:
+        author: .MaterialNote-module_note_caption__1ezSo
+        date: .Timestamp-module_root__coOvT
+        text: .GeneralMaterial-article
+      html-preview-tags:
         article: article
         tag: .RichBlock-tag
         title: .BlockTitle-first
         subtitle: .BlockTitle-second
         article-url: .Link-root
   - medium:
-      name: kp
+      name: Kp
       medium-url: https://www.kp.ru/online/
       file-name: mediums
-      html-tags:
+      html-article-tags:
+        author: .styled__FullName-sc-1jl27nw-1
+        date: .styled__Time-sc-j7em19-1
+        text: .styled__Content-sc-1wayp1z-0
+      html-preview-tags:
         article: .styled__DigestItemWrapper-sc-1tputnk-13
         tag: .styled__TagDesktop-sc-1tputnk-11
         title: .styled__TitleLink-sc-1tputnk-2

@@ -32,6 +32,11 @@ func NewSQLiteArticleRepo(dbFileName string, logger *log.Logger) (Storage, error
 		return &SQLiteRepo{}, err
 	}
 
+	err = sql.AutoMigrate(&entities.ArticlePreview{})
+	if err != nil {
+		return &SQLiteRepo{}, err
+	}
+
 	err = sql.AutoMigrate(&entities.Article{})
 	if err != nil {
 		return &SQLiteRepo{}, err
@@ -41,9 +46,9 @@ func NewSQLiteArticleRepo(dbFileName string, logger *log.Logger) (Storage, error
 }
 
 // GetArticleByID gets article with `id` from the SQLite DB
-func (r *SQLiteRepo) GetArticleByID(id int) *entities.Article {
+func (r *SQLiteRepo) GetArticleByID(id int) *entities.ArticlePreview {
 	r.logger.Printf("getting article with ID %d", id)
-	var article *entities.Article
+	var article *entities.ArticlePreview
 	tx := r.DB.Where("id = ?", id).Find(&article)
 	if tx.RowsAffected != 0 {
 		return article
@@ -77,7 +82,7 @@ func (r *SQLiteRepo) GetMediumByURL(url string) *entities.Medium {
 	return nil
 }
 
-func (r *SQLiteRepo) SaveArticle(a *entities.Article) *entities.Article {
+func (r *SQLiteRepo) SaveArticle(a *entities.ArticlePreview) *entities.ArticlePreview {
 	tx := r.DB.Create(&a)
 	if tx.Error != nil {
 		r.logger.Printf("error saving article %e", tx.Error)
