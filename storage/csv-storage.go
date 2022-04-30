@@ -27,7 +27,7 @@ func NewCSVRepo(logger *log.Logger, medium *configs.MediumConfig) (Storage, erro
 }
 
 // GetArticleByID gets article with `id` from the CSV file
-func (r *CSVRepo) GetArticleByID(id int) *entities.Article {
+func (r *CSVRepo) GetArticleByID(id int) *entities.ArticlePreview {
 
 	return nil
 }
@@ -45,7 +45,7 @@ func (r *CSVRepo) GetMediumByURL(url string) *entities.Medium {
 }
 
 // Save writes the scrapped article into the CSV file
-func (r *CSVRepo) SaveArticle(a *entities.Article) *entities.Article {
+func (r *CSVRepo) SaveArticle(a *entities.ArticlePreview) *entities.ArticlePreview {
 	defer r.Writer.Flush()
 	err := r.Writer.Write(a.ToSlice())
 	if err != nil {
@@ -59,7 +59,7 @@ func (r *CSVRepo) SaveMedium(article *entities.Medium) *entities.Medium {
 	return nil
 }
 
-func (r *CSVRepo) writeHeaders(a *entities.Article) error {
+func (r *CSVRepo) writeHeaders(a *entities.ArticlePreview) error {
 	defer r.Writer.Flush()
 	return r.Writer.Write(a.GetHeaders())
 }
