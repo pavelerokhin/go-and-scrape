@@ -26,20 +26,21 @@ func (b *Business) ScrapeAndPersist(mediumConfig configs.MediumConfig,
 
 	// scrape
 	medium := b.storage.GetMediumByURL(mediumConfig.URL)
-	articles := b.scrapper.Scrap(&mediumConfig)
+	articlePreviewsWithArticle := b.scrapper.Scrap(&mediumConfig)
 
 	// persist
-	if len(articles) > 0 {
-		articles = modules.NormalizeArticlesNLP(articles)
+	if len(articlePreviewsWithArticle) > 0 {
+		articlePreviewsWithArticle = modules.NormalizeText(articlePreviewsWithArticle)
+
 		if medium == nil || medium.URL == "" {
 			b.storage.SaveMedium(&entities.Medium{
-				Name:     mediumConfig.Name,
-				URL:      mediumConfig.URL,
-				Articles: articles,
+				Name:            mediumConfig.Name,
+				URL:             mediumConfig.URL,
+				ArticlePreviews: articlePreviewsWithArticle,
 			})
 		} else {
-			for _, article := range articles {
-				a := article
+			for _, articlePreview := range articlePreviewsWithArticle {
+				a := articlePreview
 				a.MediumID = medium.ID
 				b.storage.SaveArticle(&a)
 			}

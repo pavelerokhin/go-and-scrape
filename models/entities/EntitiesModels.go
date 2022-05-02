@@ -8,9 +8,9 @@ import (
 // Medium is a basic news portal model
 type Medium struct {
 	gorm.Model
-	Name     string `gorm:"name"`
-	URL      string `gorm:"medium_url"`
-	Articles []ArticlePreview
+	Name            string `gorm:"name"`
+	URL             string `gorm:"medium_url"`
+	ArticlePreviews []ArticlePreview
 }
 
 func (m *Medium) ToString() string {

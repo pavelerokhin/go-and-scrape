@@ -23,17 +23,18 @@ func countWords(words []string) map[string]int {
 	return count
 }
 
-func NormalizeArticlesNLP(articles []entities.ArticlePreview) []entities.ArticlePreview {
+func NormalizeText(articles []entities.ArticlePreview) []entities.ArticlePreview {
 	var normalizedArtiles []entities.ArticlePreview
 	for _, article := range articles {
-		normalizedArtiles = append(normalizedArtiles, entities.ArticlePreview{
-			Tag:      nlpManagerSmall(article.Tag),
-			Title:    nlpManagerSmall(article.Title),
-			Subtitle: nlpManagerSmall(article.Subtitle),
-			URL:      article.URL,
-			MediumID: article.MediumID,
-			Article:  article.Article,
-		})
+		normalizedArtiles = append(normalizedArtiles,
+			entities.ArticlePreview{
+				Tag:      nlpManagerSmall(article.Tag),
+				Title:    nlpManagerSmall(article.Title),
+				Subtitle: nlpManagerSmall(article.Subtitle),
+				URL:      article.URL,
+				MediumID: article.MediumID,
+				Article:  article.Article,
+			})
 	}
 
 	return normalizedArtiles
