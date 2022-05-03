@@ -8,18 +8,32 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// ReadMediumConfig reads `configs` file and returns list of Mediums
-func ReadMediumConfig(configFilePath string) (*configs.ConfigFile, error) {
+// ReadConfig reads `configs` file and returns list of Mediums and settings for the persistence
+func ReadConfig(configFilePath string) (configs.MediumConfigs, *configs.PersistenceConfig, error) {
+	mediumConfigSection, err := unmarshallPrototype(configFilePath, &configs.ConfigSection{})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	persistenceConfigSection, err := unmarshallPrototype(configFilePath, &configs.PersistenceSection{})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	return mediumConfigSection.(*configs.ConfigSection).Mediums,
+		&persistenceConfigSection.(*configs.PersistenceSection).PersistenceConfig, nil
+}
+
+func unmarshallPrototype(configFilePath string, prototype interface{}) (output interface{}, err error) {
 	bytes, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		return nil, fmt.Errorf("error reading the config file %e", err)
 	}
 
-	configFile := &configs.ConfigFile{}
-	err = yaml.Unmarshal(bytes, configFile)
+	err = yaml.Unmarshal(bytes, prototype)
 	if err != nil {
 		return nil, fmt.Errorf("error reading the config file %e", err)
 	}
 
-	return configFile, nil
+	return prototype, nil
 }
