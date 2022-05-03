@@ -1,6 +1,6 @@
 package configs
 
-type ConfigFile struct {
+type ConfigSection struct {
 	Mediums MediumConfigs `yaml:"mediums"`
 }
 
@@ -33,4 +33,15 @@ type HTMLArticleTags struct {
 	Author string `yaml:"author"`
 	Date   string `yaml:"date"`
 	Text   string `yaml:"text"`
+}
+
+type PersistenceSection struct {
+	PersistenceConfig PersistenceConfig `yaml:"persistence"`
+}
+
+// PersistenceConfig is a base configuration type for defining persistence
+type PersistenceConfig struct {
+	Filename string `yaml:"filename"`
+	Interval string `yaml:"interval"`
+	Type     string `yaml:"type"`
 }

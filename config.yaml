@@ -2,7 +2,6 @@ mediums:
   - medium:
       name: Meduza
       medium-url: https://meduza.io/
-      file-name: mediums
       html-article-tags:
         author: .MaterialNote-module_note_caption__1ezSo
         date: .Timestamp-module_root__coOvT
@@ -16,7 +15,6 @@ mediums:
   - medium:
       name: Kp
       medium-url: https://www.kp.ru/online/
-      file-name: mediums
       html-article-tags:
         author: .styled__FullName-sc-1jl27nw-1
         date: .styled__Time-sc-j7em19-1
@@ -27,3 +25,9 @@ mediums:
         title: .styled__TitleLink-sc-1tputnk-2
         subtitle: .styled__DescriptionLink-sc-1tputnk-3
         article-url: .styled__TitleLink-sc-1tputnk-2
+
+persistence:
+  filename: mediums
+  interval: 60
+  type: sql
+

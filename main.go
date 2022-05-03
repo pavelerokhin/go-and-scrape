@@ -20,24 +20,23 @@ var (
 
 func main() {
 	logger := log.New(os.Stdout, "go-and-scrape ", log.LstdFlags|log.Lshortfile)
-	configFile, err := config.ReadMediumConfig("medium-config.yaml")
+	mediaConfig, persistenceConfig, err := config.ReadConfig("config.yaml")
 	check(err)
-	checkConfig(configFile)
-	repo, err = storage.NewSQLiteArticleRepo(configFile.Mediums[0].MediumConfig.FileName,
-		logger)
+	checkMedia(&mediaConfig)
+	repo, err = storage.NewSQLiteArticleRepo(persistenceConfig.Filename, logger)
 	check(err)
 	businessLogic = business.GetBusinessLogic(logger, repo)
 
-	for _, medium := range configFile.Mediums {
+	for _, medium := range mediaConfig {
 		wg.Add(1)
 		go businessLogic.ScrapeAndPersist(medium.MediumConfig, &wg)
 	}
 	wg.Wait()
 }
 
-func checkConfig(configFile *configs.ConfigFile) {
-	if len(configFile.Mediums) == 0 {
-		fmt.Println("no mediums set")
+func checkMedia(mediaConfig *configs.MediumConfigs) {
+	if len(*mediaConfig) == 0 {
+		fmt.Println("no media set")
 		os.Exit(0)
 	}
 }

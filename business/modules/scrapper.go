@@ -44,10 +44,6 @@ func (s *Scrapper) Scrap(mediumConfig *configs.MediumConfig) []entities.ArticleP
 		go articleScrapWorker(c, item, mediumConfig, s.logger)
 	})
 
-	//for a := range c {
-	//	articlePreviews = append(articlePreviews, a)
-	//}
-
 	for i := 0; i < newsContainer.Length(); i++ {
 		articlePreviews = append(articlePreviews, <-c)
 	}
