@@ -57,6 +57,17 @@ func (r *SQLiteRepo) GetArticleByID(id int) *entities.ArticlePreview {
 	return nil
 }
 
+// GetArticleByID gets article with `url` (relative) from the SQLite DB
+// it is supposed to be unique
+func (r *SQLiteRepo) GetArticleByURL(url string) *entities.ArticlePreview {
+	var article *entities.ArticlePreview
+	tx := r.DB.Where("relative_url = ?", url).Find(&article)
+	if tx.RowsAffected != 0 {
+		return article
+	}
+	return nil
+}
+
 // GetMediumByID gets medium with `id` from the SQLite DB
 func (r *SQLiteRepo) GetMediumByID(id int) *entities.Medium {
 	r.logger.Printf("getting medium with ID %d", id)

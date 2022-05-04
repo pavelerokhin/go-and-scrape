@@ -20,12 +20,13 @@ func (m *Medium) ToString() string {
 // ArticlePreview is a basic news article model
 type ArticlePreview struct {
 	gorm.Model
-	Tag      string `gorm:"tag"`
-	Title    string `gorm:"title"`
-	Subtitle string `gorm:"subtitle"`
-	URL      string `gorm:"url"`
-	MediumID uint
-	Article  Article
+	Tag         string `gorm:"tag"`
+	Title       string `gorm:"title"`
+	Subtitle    string `gorm:"subtitle"`
+	URL         string `gorm:"url"`
+	RelativeURL string `gorm:"relative_url"`
+	MediumID    uint
+	Article     Article
 }
 
 // GetHeaders is a util function which gets CSV headers
