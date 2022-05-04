@@ -1,10 +1,12 @@
 package configs
 
-type ConfigSection struct {
-	Mediums MediumConfigs `yaml:"mediums"`
+import "time"
+
+type ScrapeSection struct {
+	Mediums MediaConfig `yaml:"mediums"`
 }
 
-type MediumConfigs []struct {
+type MediaConfig []struct {
 	MediumConfig MediumConfig `yaml:"medium"`
 }
 
@@ -41,7 +43,7 @@ type PersistenceSection struct {
 
 // PersistenceConfig is a base configuration type for defining persistence
 type PersistenceConfig struct {
-	Filename string `yaml:"filename"`
-	Interval string `yaml:"interval"`
-	Type     string `yaml:"type"`
+	Filename string        `yaml:"filename"`
+	Interval time.Duration `yaml:"interval"`
+	Type     string        `yaml:"type"`
 }
