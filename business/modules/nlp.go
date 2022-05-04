@@ -28,12 +28,13 @@ func NormalizeText(articles []entities.ArticlePreview) []entities.ArticlePreview
 	for _, article := range articles {
 		normalizedArtiles = append(normalizedArtiles,
 			entities.ArticlePreview{
-				Tag:      nlpManagerSmall(article.Tag),
-				Title:    nlpManagerSmall(article.Title),
-				Subtitle: nlpManagerSmall(article.Subtitle),
-				URL:      article.URL,
-				MediumID: article.MediumID,
-				Article:  article.Article,
+				Tag:         nlpManagerSmall(article.Tag),
+				Title:       nlpManagerSmall(article.Title),
+				Subtitle:    nlpManagerSmall(article.Subtitle),
+				URL:         article.URL,
+				RelativeURL: article.RelativeURL,
+				MediumID:    article.MediumID,
+				Article:     article.Article,
 			})
 	}
 

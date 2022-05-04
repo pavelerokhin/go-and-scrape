@@ -39,7 +39,7 @@ func (s *Scrapper) Scrap(mediumConfig *configs.MediumConfig) []entities.ArticleP
 		mediumConfig.Name)
 
 	var articlePreviews []entities.ArticlePreview
-	var c = make(chan entities.ArticlePreview, 2)
+	var c = make(chan entities.ArticlePreview)
 	newsContainer.Each(func(i int, item *goquery.Selection) {
 		go articleScrapWorker(c, item, mediumConfig, s.logger)
 	})
@@ -54,28 +54,35 @@ func (s *Scrapper) Scrap(mediumConfig *configs.MediumConfig) []entities.ArticleP
 
 func articleScrapWorker(c chan entities.ArticlePreview, item *goquery.Selection, mediumConfig *configs.MediumConfig,
 	logger *log.Logger) {
-
 	var err error
+
 	tag := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Tag).Text())
 	title := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Title).Text())
 	subtitle := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Subtitle).Text())
 
-	urlArticle, _ := item.Find(mediumConfig.HTMLArticlePreviewTags.URL).Attr("href")
-	urlArticle, err = getUrl(mediumConfig.URL, urlArticle)
+	relativeUrlArticle, _ := item.Find(mediumConfig.HTMLArticlePreviewTags.URL).Attr("href")
+	urlArticle, err := getUrl(mediumConfig.URL, relativeUrlArticle)
+	if err != nil {
+		logger.Printf("cannot parse article's URL: title %s for medium %s",
+			title,
+			mediumConfig.Name)
+		//return
+	}
 
 	article, err := getArticle(mediumConfig, urlArticle)
 	if err != nil {
 		logger.Printf("cannot parse article with URL %s for medium %s",
 			urlArticle,
 			mediumConfig.Name)
-		return
+		//return
 	}
 	c <- entities.ArticlePreview{
-		Tag:      tag,
-		Title:    title,
-		Subtitle: subtitle,
-		URL:      urlArticle,
-		Article:  article,
+		Tag:         tag,
+		Title:       title,
+		Subtitle:    subtitle,
+		URL:         urlArticle,
+		RelativeURL: relativeUrlArticle,
+		Article:     article,
 	}
 }
 

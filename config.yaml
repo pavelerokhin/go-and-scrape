@@ -28,6 +28,6 @@ mediums:
 
 persistence:
   filename: mediums
-  interval: 1800
+  interval: 120
   type: sql
 

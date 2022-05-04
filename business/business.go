@@ -27,7 +27,7 @@ func (b *Business) ScheduleOnce(mediaConfig configs.MediaConfig) {
 	var wg sync.WaitGroup
 	for _, medium := range mediaConfig {
 		wg.Add(1)
-		go b.scrapeAndPersist(medium.MediumConfig, &wg)
+		go b.scrapeNLPPersist(medium.MediumConfig, &wg)
 	}
 	wg.Wait()
 }
@@ -42,7 +42,7 @@ func (b *Business) ScheduleWithInterval(mediaConfig configs.MediaConfig,
 	}
 }
 
-func (b *Business) scrapeAndPersist(mediaConfig configs.MediumConfig, wg *sync.WaitGroup) {
+func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	// scrape
@@ -63,7 +63,12 @@ func (b *Business) scrapeAndPersist(mediaConfig configs.MediumConfig, wg *sync.W
 			for _, articlePreview := range articlePreviewsWithArticle {
 				a := articlePreview
 				a.MediumID = medium.ID
-				b.storage.SaveArticle(&a)
+				if b.storage.GetArticleByURL(a.RelativeURL) == nil {
+					b.storage.SaveArticle(&a)
+				} else {
+					b.logger.Printf("article with URL %s for medium %s is present in DB and will not be persisted",
+						a.RelativeURL, medium.Name)
+				}
 			}
 		}
 	}
