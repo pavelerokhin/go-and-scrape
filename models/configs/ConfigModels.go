@@ -45,5 +45,4 @@ type PersistenceSection struct {
 type PersistenceConfig struct {
 	Filename string        `yaml:"filename"`
 	Interval time.Duration `yaml:"interval"`
-	Type     string        `yaml:"type"`
 }
