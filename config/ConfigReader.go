@@ -9,8 +9,8 @@ import (
 )
 
 // ReadConfig reads `configs` file and returns list of Mediums and settings for the persistence
-func ReadConfig(configFilePath string) (configs.MediumConfigs, *configs.PersistenceConfig, error) {
-	mediumConfigSection, err := unmarshallPrototype(configFilePath, &configs.ConfigSection{})
+func ReadConfig(configFilePath string) (configs.MediaConfig, *configs.PersistenceConfig, error) {
+	mediumConfigSection, err := unmarshallPrototype(configFilePath, &configs.ScrapeSection{})
 	if err != nil {
 		return nil, nil, err
 	}
@@ -20,7 +20,7 @@ func ReadConfig(configFilePath string) (configs.MediumConfigs, *configs.Persiste
 		return nil, nil, err
 	}
 
-	return mediumConfigSection.(*configs.ConfigSection).Mediums,
+	return mediumConfigSection.(*configs.ScrapeSection).Mediums,
 		&persistenceConfigSection.(*configs.PersistenceSection).PersistenceConfig, nil
 }
 
