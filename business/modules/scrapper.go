@@ -2,13 +2,15 @@ package modules
 
 import (
 	"fmt"
-	"github.com/PuerkitoBio/goquery"
-	"github.com/pavelerokhin/go-and-scrape/models/configs"
-	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"jaytaylor.com/html2text"
 	"log"
 	"net/http"
 	"regexp"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 )
 
 type Scrapper struct {
@@ -74,7 +76,6 @@ func articleScrapWorker(c chan entities.ArticlePreview, item *goquery.Selection,
 			urlArticle,
 			mediumConfig.Name)
 	}
-	fmt.Println("\n\n", article.Text, "\n")
 
 	c <- entities.ArticlePreview{
 		Tag:         tag,
@@ -103,9 +104,9 @@ func getArticle(mediumConfig *configs.MediumConfig, url string) (entities.Articl
 	}
 
 	var author, date, text string
-	author = document.Find(mediumConfig.HTMLArticleTags.Author).First().Text()
-	date = document.Find(mediumConfig.HTMLArticleTags.Date).First().Text()
-	text = document.Find(mediumConfig.HTMLArticleTags.Text).First().Text()
+	author = getText(document, mediumConfig.HTMLArticleTags.Author)
+	date = getText(document, mediumConfig.HTMLArticleTags.Date)
+	text = getText(document, mediumConfig.HTMLArticleTags.Text)
 
 	return entities.Article{
 		Author: author,
@@ -169,6 +170,20 @@ func getUrl(mediumUrl, articleUrl string) (string, error) {
 	}
 
 	return urlWithoutDuplications, nil
+}
+
+func getText(document *goquery.Document, selector string) string {
+	html, err := document.Find(selector).First().Html()
+	if err != nil {
+		return ""
+	}
+
+	text, err := html2text.FromString(html)
+	if err != nil {
+		return ""
+	}
+
+	return text
 }
 
 func isUrlValid(url string) bool {
