@@ -3,6 +3,7 @@ package storage
 import (
 	"fmt"
 	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/models/nlp"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -38,6 +39,11 @@ func NewSQLiteArticleRepo(dbFileName string, logger *log.Logger) (Storage, error
 	}
 
 	err = sql.AutoMigrate(&entities.Article{})
+	if err != nil {
+		return &SQLiteRepo{}, err
+	}
+
+	err = sql.AutoMigrate(&nlp.ArticlesLemmas{})
 	if err != nil {
 		return &SQLiteRepo{}, err
 	}
