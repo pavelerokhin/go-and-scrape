@@ -51,7 +51,7 @@ func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.W
 
 	// persist
 	if len(articlePreviewsWithArticle) > 0 {
-		articlePreviewsWithArticle = modules.NormalizeText(articlePreviewsWithArticle)
+		articlePreviewsWithArticle = modules.Normalize(articlePreviewsWithArticle)
 
 		if medium == nil || medium.URL == "" {
 			b.storage.SaveMedium(&entities.Medium{
