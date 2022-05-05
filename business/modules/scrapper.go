@@ -60,13 +60,12 @@ func articleScrapWorker(c chan entities.ArticlePreview, item *goquery.Selection,
 	title := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Title).Text())
 	subtitle := strings.TrimSpace(item.Find(mediumConfig.HTMLArticlePreviewTags.Subtitle).Text())
 
-	relativeUrlArticle, _ := item.Find(mediumConfig.HTMLArticlePreviewTags.URL).Attr("href")
-	urlArticle, err := getUrl(mediumConfig.URL, relativeUrlArticle)
+	relativeURLArticle, _ := item.Find(mediumConfig.HTMLArticlePreviewTags.URL).Attr("href")
+	urlArticle, err := getUrl(mediumConfig.URL, relativeURLArticle)
 	if err != nil {
 		logger.Printf("cannot parse article's URL: title %s for medium %s",
 			title,
 			mediumConfig.Name)
-		//return
 	}
 
 	article, err := getArticle(mediumConfig, urlArticle)
@@ -74,14 +73,15 @@ func articleScrapWorker(c chan entities.ArticlePreview, item *goquery.Selection,
 		logger.Printf("cannot parse article with URL %s for medium %s",
 			urlArticle,
 			mediumConfig.Name)
-		//return
 	}
+	fmt.Println("\n\n", article.Text, "\n")
+
 	c <- entities.ArticlePreview{
 		Tag:         tag,
 		Title:       title,
 		Subtitle:    subtitle,
 		URL:         urlArticle,
-		RelativeURL: relativeUrlArticle,
+		RelativeURL: relativeURLArticle,
 		Article:     article,
 	}
 }
