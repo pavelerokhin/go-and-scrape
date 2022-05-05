@@ -57,7 +57,13 @@ func nlpManagerBig(s string) []string {
 }
 
 func nlpManagerSmall(s string) string {
-	return strings.ToLower(stripPunctuation(s))
+	return normalizeWhitespaces(stripPunctuation(s))
+}
+
+func normalizeWhitespaces(s string) string {
+	ws := regexp.MustCompile(`[ \s]`)
+	space := regexp.MustCompile(`\s+`)
+	return space.ReplaceAllLiteralString(ws.ReplaceAllLiteralString(s, " "), " ")
 }
 
 func rankByWordCount(wordFrequencies map[string]int) PairList {
