@@ -17,20 +17,24 @@ func Normalize(articles []entities.ArticlePreview) []entities.ArticlePreview {
 				URL:         article.URL,
 				RelativeURL: article.RelativeURL,
 				MediumID:    article.MediumID,
-				Article:     article.Article,
+				Article: entities.Article{
+					Author: article.Article.Author,
+					Date:   article.Article.Date,
+					Text:   normalizeText(article.Article.Text),
+				},
 			})
 	}
 
 	return normalizedArticles
 }
 
-func addWhitespaceAroundPeriod(s string) string {
-	period := regexp.MustCompile(`[a-zA-z](\.)[a-zA-z]`)
-	return period.ReplaceAllLiteralString(s, " . ")
+func addWhitespaceAroundPunctuation(s string) string {
+	punctuation := regexp.MustCompile(`([^a-zA-Z])(\.|\,)([^a-zA-Z])`)
+	return punctuation.ReplaceAllString(s, "$1$2 $3")
 }
 
 func normalizeText(s string) string {
-	return addWhitespaceAroundPeriod(normalizeWhitespaces(stripPunctuation(s)))
+	return addWhitespaceAroundPunctuation(normalizeWhitespaces(s))
 }
 
 func normalizeWhitespaces(s string) string {
