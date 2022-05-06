@@ -85,8 +85,6 @@ func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.W
 	if err != nil {
 		log.Println(err)
 	}
-	venvCmd := exec.Command(filepath.Join(path, "env/bin/activate"))
-
 	cmd := exec.Command("python", filepath.Join(path, "business/nlp/nlp_manager.py"))
 	//out, err := cmd.Output()
 	//if err != nil {
@@ -100,10 +98,7 @@ func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.W
 	var stderr bytes.Buffer
 	cmd.Stdout = &out
 	cmd.Stderr = &stderr
-	err = venvCmd.Run()
-	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
-	}
+
 	err = cmd.Run()
 	if err != nil {
 		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
