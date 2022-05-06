@@ -1,7 +1,12 @@
 package business
 
 import (
+	"bytes"
+	"fmt"
 	"log"
+	"os"
+	"os/exec"
+	"path/filepath"
 	"sync"
 	"time"
 
@@ -51,6 +56,7 @@ func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.W
 
 	// persist
 	if len(articlePreviewsWithArticle) > 0 {
+		b.logger.Println("article's text normalization")
 		articlePreviewsWithArticle = modules.Normalize(articlePreviewsWithArticle)
 
 		if medium == nil || medium.URL == "" {
@@ -72,4 +78,30 @@ func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.W
 			}
 		}
 	}
+	// run Python nlp module
+	// TODO: contenerise PY script and work with container, now it is not working
+	b.logger.Println("run Named Entity Recognition module")
+	path, err := os.Getwd()
+	if err != nil {
+		log.Println(err)
+	}
+	cmd := exec.Command("python", filepath.Join(path, "business/nlp/nlp_manager.py"))
+	//out, err := cmd.Output()
+	//if err != nil {
+	//	b.logger.Printf("error running the NER module: %v", err)
+	//}
+	//
+	//if out != nil {
+	//	b.logger.Println("ner script output: ", string(out))
+	//}
+	var out bytes.Buffer
+	var stderr bytes.Buffer
+	cmd.Stdout = &out
+	cmd.Stderr = &stderr
+
+	err = cmd.Run()
+	if err != nil {
+		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+	}
+	fmt.Println("NER output: " + out.String())
 }
