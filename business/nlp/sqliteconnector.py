@@ -2,6 +2,7 @@ import sqlite3
 
 
 def get_texts(db_name):
+    print("retrieving text from the SQLite database")
     con = sqlite3.connect(f'../../{db_name}.db')
     texts = con.execute(f"SELECT id, text FROM articles WHERE id NOT IN (SELECT article_id FROM "
                         f"articles_lemmas)").fetchall()
