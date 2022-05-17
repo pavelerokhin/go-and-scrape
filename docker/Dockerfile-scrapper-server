@@ -1,0 +1,18 @@
+FROM golang:latest
+
+LABEL maintainer = "Pavel Erokgin <pavel.v.erokhin@gmail.com>"
+
+WORKDIR /app
+RUN mkdir database
+RUN mkdir config
+
+COPY ../scrapper/go.mod .
+#COPY go.sum .
+
+RUN go mod download
+
+COPY ../scrapper .
+
+RUN go build -o scrapper
+
+CMD ["./scrapper"]

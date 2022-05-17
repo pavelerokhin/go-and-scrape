@@ -17,7 +17,7 @@ var (
 
 func main() {
 	logger := log.New(os.Stdout, "go-and-scrape ", log.LstdFlags|log.Lshortfile)
-	mediaConfig, persistenceConfig, err := config.ReadConfig("config.yaml")
+	mediaConfig, persistenceConfig, err := config.ReadConfig("config/config.yaml")
 	check(err)
 	config.CheckMediaConfig(&mediaConfig)
 	repo, err = storage.NewSQLiteArticleRepo(persistenceConfig.Filename, logger)

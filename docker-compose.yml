@@ -1,0 +1,22 @@
+
+version: "3.7"
+services:
+  scrpper:
+    image: scrapper-server
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile-scrapper-server
+    volumes:
+      - $PWD/database:/app/database
+      - $PWD/config:/app/config
+
+#  nlp:
+#    image: nlp-server
+#    build:
+#      context: .
+#      dockerfile: ./docker/Dockerfile-nlp-server
+#    ports:
+#      - "8000:8000"
+#    volumes:
+#      - $PWD/database:/app/database
+#      - $PWD/config:/app/config
