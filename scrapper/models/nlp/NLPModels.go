@@ -1,6 +1,6 @@
 package nlp
 
-import "github.com/pavelerokhin/go-and-scrape/models/entities"
+import "github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
 
 // ArticlesLemmas is a basic ner metrics persistence
 type ArticlesLemmas struct {

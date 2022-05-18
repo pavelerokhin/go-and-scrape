@@ -1,14 +1,16 @@
 
 FROM python:3.9
 
-LABEL maintainer = "Pavel Erokgin <pavel.v.erokhin@gmail.com>"
+LABEL maintainer = "Pavel Erokhin <pavel.v.erokhin@gmail.com>"
+
+RUN mkdir /database
+RUN mkdir /config
 
 WORKDIR /app
 
-COPY ../nlp/requirements.txt .
-
-RUN pip install -r requirements.txt
-
 COPY ../nlp .
 
-CMD ["python", "./nlp_manager.py"]
+RUN pip install -r requirements.txt
+RUN python -m spacy download ru_core_news_sm
+
+CMD ["python", "app.py"]

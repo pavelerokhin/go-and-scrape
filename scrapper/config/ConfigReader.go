@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pavelerokhin/go-and-scrape/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
 	"gopkg.in/yaml.v2"
 )
 
@@ -27,12 +27,12 @@ func ReadConfig(configFilePath string) (configs.MediaConfig, *configs.Persistenc
 func unmarshallPrototype(configFilePath string, prototype interface{}) (output interface{}, err error) {
 	bytes, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		return nil, fmt.Errorf("error reading the config file %e", err)
+		return nil, fmt.Errorf("error reading the config file %v", err)
 	}
 
 	err = yaml.Unmarshal(bytes, prototype)
 	if err != nil {
-		return nil, fmt.Errorf("error reading the config file %e", err)
+		return nil, fmt.Errorf("error reading the config file %v", err)
 	}
 
 	return prototype, nil

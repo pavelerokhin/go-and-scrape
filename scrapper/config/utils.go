@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"github.com/pavelerokhin/go-and-scrape/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
 	"os"
 )
 

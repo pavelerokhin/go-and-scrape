@@ -1,19 +1,15 @@
 package business
 
 import (
-	"bytes"
-	"fmt"
 	"log"
-	"os"
-	"os/exec"
-	"path/filepath"
+	"net/http"
 	"sync"
 	"time"
 
-	"github.com/pavelerokhin/go-and-scrape/business/modules"
-	"github.com/pavelerokhin/go-and-scrape/models/configs"
-	"github.com/pavelerokhin/go-and-scrape/models/entities"
-	"github.com/pavelerokhin/go-and-scrape/storage"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/business/modules"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/storage"
 )
 
 type Business struct {
@@ -79,29 +75,15 @@ func (b *Business) scrapeNLPPersist(mediaConfig configs.MediumConfig, wg *sync.W
 		}
 	}
 	// run Python nlp module
-	// TODO: contenerise PY script and work with container, now it is not working
 	b.logger.Println("run Named Entity Recognition module")
-	path, err := os.Getwd()
-	if err != nil {
-		log.Println(err)
-	}
-	cmd := exec.Command("python", filepath.Join(path, "business/nlp/nlp_manager.py"))
-	//out, err := cmd.Output()
-	//if err != nil {
-	//	b.logger.Printf("error running the NER module: %v", err)
-	//}
-	//
-	//if out != nil {
-	//	b.logger.Println("ner script output: ", string(out))
-	//}
-	var out bytes.Buffer
-	var stderr bytes.Buffer
-	cmd.Stdout = &out
-	cmd.Stderr = &stderr
+	nlpNerRequest()
+}
 
-	err = cmd.Run()
+func nlpNerRequest() {
+	url := "http://127.0.0.1:7070/ner"
+
+	_, err := http.Get(url)
 	if err != nil {
-		fmt.Println(fmt.Sprint(err) + ": " + stderr.String())
+		log.Fatalln(err)
 	}
-	fmt.Println("NER output: " + out.String())
 }
