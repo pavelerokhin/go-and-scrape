@@ -3,7 +3,7 @@ package modules
 import (
 	"regexp"
 
-	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
 )
 
 func Normalize(articles []entities.ArticlePreview) []entities.ArticlePreview {

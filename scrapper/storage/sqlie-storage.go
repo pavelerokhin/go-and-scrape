@@ -2,8 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"github.com/pavelerokhin/go-and-scrape/models/entities"
-	"github.com/pavelerokhin/go-and-scrape/models/nlp"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/nlp"
 	"log"
 
 	"gorm.io/driver/sqlite"
@@ -21,7 +21,7 @@ func NewSQLiteArticleRepo(dbFileName string, logger *log.Logger) (Storage, error
 		return &SQLiteRepo{}, fmt.Errorf("database name is empty")
 	}
 
-	sql, err := gorm.Open(sqlite.Open(fmt.Sprintf("database/%s.db", dbFileName)), &gorm.Config{
+	sql, err := gorm.Open(sqlite.Open(fmt.Sprintf("../database/%s.db", dbFileName)), &gorm.Config{
 		Logger: glogger.Default.LogMode(glogger.Silent),
 	})
 	if err != nil {

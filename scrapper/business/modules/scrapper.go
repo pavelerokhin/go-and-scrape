@@ -9,8 +9,8 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/pavelerokhin/go-and-scrape/models/configs"
-	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
 )
 
 type Scrapper struct {
