@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"gitgub.com/pavelerokhin/go-and-scrape/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 )
 
 type Storage interface {

@@ -5,6 +5,7 @@ go 1.16
 require (
 	github.com/PuerkitoBio/goquery v1.8.0
 	github.com/olekukonko/tablewriter v0.0.5 // indirect
+	github.com/pavelerokhin/go-and-scrape/models v0.0.0-20220524131944-63ff10c55d2c
 	github.com/ssor/bom v0.0.0-20170718123548-6386211fdfcf // indirect
 	github.com/stretchr/testify v1.7.1
 	gopkg.in/yaml.v2 v2.4.0
