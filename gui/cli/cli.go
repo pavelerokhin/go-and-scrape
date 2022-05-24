@@ -77,7 +77,7 @@ func (m GuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m GuiModel) View() string {
 	// The header
-	s := "What should we buy at the market?\n"
+	s := ""
 
 	// Render the row
 	//doc := strings.Builder{}
@@ -110,7 +110,7 @@ func (m GuiModel) View() string {
 	}
 
 	// The footer
-	s = lipgloss.JoinVertical(lipgloss.Left, s, rows, "\nPress q to quit.\n")
+	s = lipgloss.JoinHorizontal(lipgloss.Top, MakeMenu("⭠ ⭢\nspace: select\na: analytics\nq: quit\n"), lipgloss.JoinVertical(lipgloss.Left, s, rows))
 
 	// Send the UI for rendering
 	return s
