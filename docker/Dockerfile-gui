@@ -1,0 +1,16 @@
+FROM golang:latest
+
+LABEL maintainer = "Pavel Erokhin <pavel.v.erokhin@gmail.com>"
+
+RUN mkdir database
+
+RUN mkdir config
+
+WORKDIR /app
+COPY ../gui .
+
+RUN go mod download
+
+RUN go build -o gui
+
+CMD ["./gui"]
