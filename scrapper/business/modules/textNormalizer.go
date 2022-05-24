@@ -1,9 +1,8 @@
 package modules
 
 import (
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 	"regexp"
-
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
 )
 
 func Normalize(articles []entities.ArticlePreview) []entities.ArticlePreview {

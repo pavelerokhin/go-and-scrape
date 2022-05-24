@@ -1,14 +1,14 @@
 package business
 
 import (
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 	"log"
 	"net/http"
 	"sync"
 	"time"
 
 	"github.com/pavelerokhin/go-and-scrape/scrapper/business/modules"
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
 	"github.com/pavelerokhin/go-and-scrape/scrapper/storage"
 )
 

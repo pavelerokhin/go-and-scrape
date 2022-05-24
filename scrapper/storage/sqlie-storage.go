@@ -2,8 +2,8 @@ package storage
 
 import (
 	"fmt"
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/nlp"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
+	"github.com/pavelerokhin/go-and-scrape/models/nlp"
 	"log"
 
 	"gorm.io/driver/sqlite"
