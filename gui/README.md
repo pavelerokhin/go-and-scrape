@@ -1,3 +1,4 @@
 # `go-and-scrape` GUI
-
-A simple GUI client implementing [charm](). 
+Gui has tu modes:
+ * http GUI server implementing `gin` library,
+ * GUI-CLI client implementing [charm](https://charm.sh/). 
