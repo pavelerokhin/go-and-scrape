@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
 	"gopkg.in/yaml.v2"
+
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
 )
 
 // ReadConfig reads `configs` file and returns list of Mediums and settings for the persistence

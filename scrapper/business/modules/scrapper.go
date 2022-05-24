@@ -2,6 +2,8 @@ package modules
 
 import (
 	"fmt"
+	"github.com/pavelerokhin/go-and-scrape/models/configs"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 	"jaytaylor.com/html2text"
 	"log"
 	"net/http"
@@ -9,8 +11,6 @@ import (
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/configs"
-	"github.com/pavelerokhin/go-and-scrape/scrapper/models/entities"
 )
 
 type Scrapper struct {
