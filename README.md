@@ -27,8 +27,9 @@ mediums:
   * `filename` - name of SQLite DB file (without extension),
   * `interval` - scrapper's int parameter of scheduling interval in seconds. If `0`, app executes just one time and finishes. Default: `0`.
 
-## run
+## run scrapper
 ```
+docker-compose up
 go run main.go
 ```
 
