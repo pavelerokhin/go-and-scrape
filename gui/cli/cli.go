@@ -2,30 +2,28 @@ package cli
 
 import (
 	"fmt"
+	"github.com/pavelerokhin/go-and-scrape/models/entities"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 )
 
 type GuiModel struct {
-	news     []string         // items on the to-do list
+	newsModel []entities.ArticlePreview // model behind rendered news
+
 	cursor   int              // which to-do list item our cursor is pointing at
 	selected map[int]struct{} // which to-do items are selected
 }
 
-func PopulateGeneralNewsModel(news []string) GuiModel {
-	var renderedNews []string
-	for _, n := range news {
-		renderedNews = append(renderedNews, historyStyle.Copy().Render(n))
-	}
+func PopulateGeneralNewsModel(news []entities.ArticlePreview) GuiModel {
 
 	return GuiModel{
-		// Our shopping list is a grocery list
-		news: renderedNews,
-
-		// A map which indicates which news are selected. We're using
+		//// Our shopping list is a grocery list
+		//newsGui:   renderedNews,
+		newsModel: news,
+		// A map which indicates which newsGui are selected. We're using
 		// the  map like a mathematical set. The keys refer to the indexes
-		// of the `news` slice, above.
+		// of the `newsGui` slice, above.
 		selected: make(map[int]struct{}),
 	}
 }
@@ -56,7 +54,7 @@ func (m GuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		// The "down" and "j" keys move the cursor down
 		case "down", "j":
-			if m.cursor < len(m.news)-1 {
+			if m.cursor < len(m.newsModel)-1 {
 				m.cursor++
 			}
 
@@ -85,8 +83,8 @@ func (m GuiModel) View() string {
 	//doc := strings.Builder{}
 	rows := ""
 
-	// Iterate over our news
-	for i, choice := range m.news {
+	// Iterate over our newsGui
+	for i, n := range m.newsModel {
 
 		// Is the cursor pointing at this choice?
 		cursor := "" // no cursor
@@ -100,13 +98,15 @@ func (m GuiModel) View() string {
 			checked = "x" // selected!
 		}
 
-		if i == 0 || i%3 != 0 {
-			rows = lipgloss.JoinHorizontal(lipgloss.Top, rows, fmt.Sprintf("%d. %s [%s] %s   ", i, cursor, checked, choice))
-		} else {
+		if i != 0 && i%3 == 0 {
 			s = lipgloss.JoinVertical(lipgloss.Left, s, rows)
 			rows = ""
-			rows = lipgloss.JoinHorizontal(lipgloss.Top, rows, fmt.Sprintf("%d. %s [%s] %s   ", i, cursor, checked, choice))
 		}
+		rows = lipgloss.JoinHorizontal(lipgloss.Top, rows, fmt.Sprintf("%d. %s [%s]\n%s ",
+			i+1,
+			cursor,
+			checked,
+			MakeCard(n, checked == "x")))
 	}
 
 	// The footer
