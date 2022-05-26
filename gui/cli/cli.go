@@ -11,8 +11,9 @@ import (
 type GuiModel struct {
 	newsModel []entities.ArticlePreview // model behind rendered news
 
-	cursor   int              // which to-do list item our cursor is pointing at
-	selected map[int]struct{} // which to-do items are selected
+	isDetailView bool
+	cursor       int              // which to-do list item our cursor is pointing at
+	selected     map[int]struct{} // which to-do items are selected
 }
 
 func PopulateGeneralNewsModel(news []entities.ArticlePreview) GuiModel {
@@ -46,6 +47,10 @@ func (m GuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
+		// These keys should exit the program.
+		case "a":
+			m.isDetailView = !m.isDetailView
+
 		// The "up" and "k" keys move the cursor up
 		case "up", "k":
 			if m.cursor > 0 {
@@ -76,6 +81,46 @@ func (m GuiModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m GuiModel) View() string {
+	var s string
+	if m.isDetailView {
+		s = m.detailView(1)
+	} else {
+		s = m.generalView()
+	}
+
+	return s
+}
+
+func (m GuiModel) detailView(args ...int) string {
+	// The header
+	s := ""
+
+	// Render the row
+	//doc := strings.Builder{}
+	rows := ""
+
+	// Iterate over our newsGui
+	for i, n := range m.newsModel {
+		// Is this choice selected?
+		if _, ok := m.selected[i]; ok {
+			if i != 0 && i%3 == 0 {
+				s = lipgloss.JoinVertical(lipgloss.Left, s, rows)
+				rows = ""
+			}
+			rows = lipgloss.JoinHorizontal(lipgloss.Top, rows,
+				MakeArticle(n))
+		}
+
+	}
+
+	// The footer
+	s = lipgloss.JoinHorizontal(lipgloss.Top, MakeMenu("⭠ ⭢\nspace: select\na: analytics\nq: quit\n"), lipgloss.JoinVertical(lipgloss.Left, s, rows))
+
+	// Send the UI for rendering
+	return s
+}
+
+func (m GuiModel) generalView() string {
 	// The header
 	s := ""
 
