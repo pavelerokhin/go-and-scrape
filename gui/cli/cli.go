@@ -107,7 +107,7 @@ func (m GuiModel) detailView(args ...int) string {
 				s = lipgloss.JoinVertical(lipgloss.Left, s, rows)
 				rows = ""
 			}
-			rows = lipgloss.JoinHorizontal(lipgloss.Top, rows,
+			rows = lipgloss.JoinVertical(lipgloss.Top, rows,
 				MakeArticle(n))
 		}
 
