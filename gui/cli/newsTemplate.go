@@ -73,16 +73,12 @@ var (
 	titleInnerStyle = lipgloss.NewStyle().
 			Align(lipgloss.Left).
 			Foreground(grey).
-			Margin(1, 3, 0, 0).
-			Padding(1, 2).
 			Height(4).
 			Width(cardWidth)
 
 	subtitleInnerStyle = lipgloss.NewStyle().
 				Align(lipgloss.Left).
 				Foreground(lipgloss.Color("#aaaaaa")).
-				Margin(1, 3, 0, 0).
-				Padding(1, 2).
 				Height(2).
 				Width(cardWidth)
 )
