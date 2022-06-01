@@ -115,7 +115,9 @@ func main() {
 			},
 		}
 
-		p := tea.NewProgram(cli.PopulateGeneralNewsModel(news))
+		p := tea.NewProgram(cli.InitGeneralModel(logger, news),
+			tea.WithAltScreen()) // use the full size of the terminal in its "alternate screen buffer"
+		//tea.WithMouseCellMotion()) // turn on mouse support so we can track the mouse wheel
 		if err := p.Start(); err != nil {
 			logger.Printf("error implementing cli mode: %v", err)
 			os.Exit(1)
