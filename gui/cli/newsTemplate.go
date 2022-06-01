@@ -6,15 +6,24 @@ import (
 )
 
 var (
-	grey         = lipgloss.AdaptiveColor{Light: "#111111", Dark: "#fafafa"}
-	red          = lipgloss.Color("#f50202")
-	highlight    = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
-	articleWidth = 150
-	cardWidth    = 40
+	grey      = lipgloss.AdaptiveColor{Light: "#111111", Dark: "#fafafa"}
+	red       = lipgloss.Color("#f50202")
+	highlight = lipgloss.AdaptiveColor{Light: "#874BFD", Dark: "#7D56F4"}
+
+	menu = lipgloss.NewStyle().
+		Border(borderRight, true).
+		BorderForeground(grey).
+		Margin(0, 2).
+		Padding(0, 2).
+		Height(4 * 14)
+
+	menuContentGeneral = "⭠ ⭢\nspace: select\na: analytics\nq: quit\n"
+	menuContentDetail  = "↑ ↓\nspace: select\na: back to general\n"
+
+	// general view
+	cardWidth = 40
 
 	articleStyle = lipgloss.NewStyle().
-			Border(border, true).
-			BorderForeground(grey).
 			Padding(1, 1)
 
 	border = lipgloss.Border{
@@ -42,34 +51,6 @@ var (
 			BorderForeground(highlight).
 			Padding(0, 1)
 
-	menu = lipgloss.NewStyle().
-		Border(borderRight, true).
-		BorderForeground(grey).
-		Margin(0, 2).
-		Padding(0, 2).
-		Height(4 * 14)
-
-	titleArticleStyle = lipgloss.NewStyle().
-				Align(lipgloss.Left).
-				Foreground(red).
-				Margin(1, 0, 1, 0).
-				Height(1).
-				Width(articleWidth)
-
-	articleDataStyle = lipgloss.NewStyle().
-				Align(lipgloss.Left).
-				Foreground(grey).
-				Margin(1, 0, 1, 0).
-				Height(1).
-				Width(articleWidth)
-
-	textArticleStyle = lipgloss.NewStyle().
-				Align(lipgloss.Left).
-				Foreground(grey).
-				Margin(1, 0, 1, 0).
-				Height(15).
-				Width(articleWidth)
-
 	titleInnerStyle = lipgloss.NewStyle().
 			Align(lipgloss.Left).
 			Foreground(grey).
@@ -81,6 +62,20 @@ var (
 				Foreground(lipgloss.Color("#aaaaaa")).
 				Height(2).
 				Width(cardWidth)
+
+	// detail view
+	articleWidth = 150
+
+	titleArticleStyle = lipgloss.NewStyle().
+				Align(lipgloss.Left).
+				Foreground(red).
+				Width(articleWidth)
+
+	articleDataStyle = lipgloss.NewStyle().
+				Align(lipgloss.Left).
+				Foreground(grey).
+				PaddingTop(2).
+				Width(articleWidth)
 )
 
 func MakeArticle(articlePreview entities.ArticlePreview) string {
@@ -88,7 +83,7 @@ func MakeArticle(articlePreview entities.ArticlePreview) string {
 		articleDataStyle.Render(articlePreview.Subtitle),
 		articleDataStyle.Render(articlePreview.Article.Date),
 		articleDataStyle.Render(articlePreview.Article.Author),
-		textArticleStyle.Render(articlePreview.Article.Text)))
+		articleDataStyle.Render(articlePreview.Article.Text)))
 }
 
 func MakeCard(articlePreview entities.ArticlePreview, isActive bool) string {
@@ -98,6 +93,6 @@ func MakeCard(articlePreview entities.ArticlePreview, isActive bool) string {
 	return cardActive.Render(lipgloss.JoinVertical(lipgloss.Left, titleInnerStyle.Render(articlePreview.Title), subtitleInnerStyle.Render(articlePreview.Subtitle)))
 }
 
-func MakeMenu(menuText string) string {
-	return menu.Render(menuText)
+func MakeMenu(menuContent string) string {
+	return menu.Render(menuContent)
 }
